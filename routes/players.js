@@ -1,20 +1,32 @@
-// routes/players.js
-const express = require('express');
-const db = require('../db'); // Import db.js to get the connection
-const router = express.Router();
+// In routes/players.js
+var express = require('express');
+var router = express.Router();
+const db = require('../db');  // Import the database connection
 
-// Define the /players endpoint
-router.get('/players', async function(req, res, next) {
-  try {
-    // Query the database to get players
-    const players = await db.any('SELECT id, email, name FROM players');
-    
-    // Send the result as JSON
-    res.json(players);
-  } catch (err) {
-    console.error('Error fetching players:', err);
-    res.status(500).send('Internal Server Error');
-  }
+// GET /players - get all players
+router.get('/', function(req, res, next) {
+  db.any('SELECT * FROM player;')
+    .then(players => {
+      res.json(players);
+    })
+    .catch(err => {
+      res.status(500).json({ error: err.message });
+    });
 });
+
+// GET /players/:id - get a player by their ID
+router.get('/:id', function(req, res, next) {
+  const playerId = req.params.id;
+
+  // Query the database to fetch the player with the given ID
+  db.one('SELECT * FROM player WHERE id = $1;', [playerId])  // $1 is a placeholder for parameterized queries
+    .then(player => {
+      res.json(player);  // Send the player data back as JSON
+    })
+    .catch(err => {
+      res.status(404).json({ error: `Player with ID ${playerId} not found` });
+    });
+});
+
 
 module.exports = router;
