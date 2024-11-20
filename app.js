@@ -8,6 +8,7 @@ var playersRouter = require('./routes/players');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var hw3Router = require('./routes/hw3');
 
 var app = express();
 
@@ -24,6 +25,7 @@ app.use('/players', playersRouter);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/hw3', hw3Router);
 
 // Test route for DB connection and environment variables
 app.get('/test-db-connection', async (req, res) => {
